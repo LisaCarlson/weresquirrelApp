@@ -35,6 +35,7 @@ router.get('/', function(req, res, next) {
 
 });
 
+
 router.get('/:id', function(req, res, next) {
   var result = {};
   Colonies.findById(req.params.id).then(function (colony) {
@@ -63,57 +64,37 @@ router.get('/:id', function(req, res, next) {
         });
       });
       result['weresquirrelData'] = weresquirrelData;
+      result['unibears'] = [];
       return result;
     }).then(function (result){
-      Colonies.findById(req.params.id).then(function (colonies) {
-        return UnibearAgreements
+      Colonies.findById(req.params.id).then(function (colony) {
+        return UnibearAgreements.find({colonyId: colony._id}).then(function (agreements) {
+          return agreements;
+        })
+      }).then(function (agreements) {
+        return agreements.map(function (agreement) {
+          return agreement.unibearId;
+        });
+      }).then(function (unibearIds) {
+        return Unibears.find({_id: {$in: unibearIds}}).then(function (unibearDocs) {
+          return unibearDocs;
+        })
+      }).then(function (unibears) {
+        unibears.forEach(function (unibear) {
+          result.unibears.push({ name:unibear.name });
+        });
+        return result;
+      }).then(function (result) {
+        res.render('colonies/show', {weresquirrels: result.weresquirrelData, unibears: result.unibears})
       })
     })
   })
 })
 
 
-// .then(function (result) {
-//       res.render('colonies/show', {weresquirrels: result.weresquirrelData})
-//     })
+
 module.exports = router;
 
-// router.get('/:id', function(req, res, next) {
-//   var result = {};
-//   Colonies.findById(req.params.id).then(function (colony) {
-//     return WeresquirrelAgreements.find({colonyId: colony._id}).then(function (weresquirrels) {
-//       return weresquirrels;
-//     });
-//   }).then(function (weresquirrels) {
-//     return weresquirrels.map(function (weresquirrel) {
-//       return weresquirrel.weresquirrelId;
-//     })
-//   }).then(function (weresquirrelIds) {
-//     return Weresquirrels.find({_id: {$in: weresquirrelIds}}).then(function (weresquirrelDocs) {
-//       return weresquirrelDocs;
-//     })
-//   }).then(function (weresquirrels) {
-//     var weresquirrelData = [];
-//     var promises = [];
-//     weresquirrels.forEach(function (weresquirrel) {
-//       weresquirrelData.push({name: weresquirrel.name, duels:[]});
-//       promises.push(WeresquirrelStats.find({weresquirrelId: weresquirrel._id}))
-//     });
-//     Promise.all(promises).then(function (weresquirrelStats) {
-//       weresquirrelStats.forEach(function (duelStats, i) {
-//         duelStats.forEach(function (duelStat) {
-//           weresquirrelData[i].duels.push(duelStat);
-//         });
-//       });
-//       result['weresquirrelData'] = weresquirrelData;
-//       return result;
-//     }).then(function (result){
-//       Colonies.findById(req.params.id).then(function (colonies) {
-//         return UnibearAgreements
-//       })
-//     })
-//   })
-// })
 
 
 
