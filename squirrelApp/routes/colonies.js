@@ -34,25 +34,96 @@ router.get('/', function(req, res, next) {
   });
 
 });
+
+router.get('/:id', function(req, res, next) {
+  var result = {};
+  Colonies.findById(req.params.id).then(function (colony) {
+    return WeresquirrelAgreements.find({colonyId: colony._id}).then(function (weresquirrels) {
+      return weresquirrels;
+    });
+  }).then(function (weresquirrels) {
+    return weresquirrels.map(function (weresquirrel) {
+      return weresquirrel.weresquirrelId;
+    })
+  }).then(function (weresquirrelIds) {
+    return Weresquirrels.find({_id: {$in: weresquirrelIds}}).then(function (weresquirrelDocs) {
+      return weresquirrelDocs;
+    })
+  }).then(function (weresquirrels) {
+    var weresquirrelData = [];
+    var promises = [];
+    weresquirrels.forEach(function (weresquirrel) {
+      weresquirrelData.push({name: weresquirrel.name, duels:[]});
+      promises.push(WeresquirrelStats.find({weresquirrelId: weresquirrel._id}))
+    });
+    Promise.all(promises).then(function (weresquirrelStats) {
+      weresquirrelStats.forEach(function (duelStats, i) {
+        duelStats.forEach(function (duelStat) {
+          weresquirrelData[i].duels.push(duelStat);
+        });
+      });
+      result['weresquirrelData'] = weresquirrelData;
+      return result;
+    }).then(function (result){
+      Colonies.findById(req.params.id).then(function (colonies) {
+        return UnibearAgreements
+      })
+    })
+  })
+})
+
+
+// .then(function (result) {
+//       res.render('colonies/show', {weresquirrels: result.weresquirrelData})
+//     })
 module.exports = router;
 
-
-
-// .then(function (duelResults) {
-//     result['duels'] = duelResults;
-//     console.log(result);
-//   });
-
-// router.get('/', function(req, res, next) {
+// router.get('/:id', function(req, res, next) {
 //   var result = {};
-//   Colonies.find({}).then(function (colonies) {
-//     result['colonies'] = colonies;
-//     var promises = colonies.map(function (colony) {
-//       return Duels.find({ $or: [ { first_colony: colony._id }, { second_colony: colony._id  } ] }).then(function (duels) {
-//         return duels;
-//       });
+//   Colonies.findById(req.params.id).then(function (colony) {
+//     return WeresquirrelAgreements.find({colonyId: colony._id}).then(function (weresquirrels) {
+//       return weresquirrels;
 //     });
-//     return Promise.all(promises);
-//   });
-// });
-// module.exports = router;
+//   }).then(function (weresquirrels) {
+//     return weresquirrels.map(function (weresquirrel) {
+//       return weresquirrel.weresquirrelId;
+//     })
+//   }).then(function (weresquirrelIds) {
+//     return Weresquirrels.find({_id: {$in: weresquirrelIds}}).then(function (weresquirrelDocs) {
+//       return weresquirrelDocs;
+//     })
+//   }).then(function (weresquirrels) {
+//     var weresquirrelData = [];
+//     var promises = [];
+//     weresquirrels.forEach(function (weresquirrel) {
+//       weresquirrelData.push({name: weresquirrel.name, duels:[]});
+//       promises.push(WeresquirrelStats.find({weresquirrelId: weresquirrel._id}))
+//     });
+//     Promise.all(promises).then(function (weresquirrelStats) {
+//       weresquirrelStats.forEach(function (duelStats, i) {
+//         duelStats.forEach(function (duelStat) {
+//           weresquirrelData[i].duels.push(duelStat);
+//         });
+//       });
+//       result['weresquirrelData'] = weresquirrelData;
+//       return result;
+//     }).then(function (result){
+//       Colonies.findById(req.params.id).then(function (colonies) {
+//         return UnibearAgreements
+//       })
+//     })
+//   })
+// })
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,27 @@
+extends ../layout
+
+block content
+  .container
+    .col-md-6.col-md-offset-3
+      h1 Colony's Weresquirrels
+      for weresquirrel in weresquirrels
+        .row
+          .col-md-6
+            h2.text-center.text-danger= weresquirrel.name
+            table.table.table-striped.table-bordered
+              thead
+                tr
+                  th Garlic
+                  th Meat
+              tbody
+                for duel in weresquirrel.duels
+                  tr
+                    td= duel.garlic
+                    td= duel.meat
+      .row
+        .col-md-6.col-md-offset-2
+          a(href='/colonies' class='btn btn-primary') Home
+      //- p Protected by
+      //- ul 
+      //- for unibear in unibears
+      //-   li= unibear.name
