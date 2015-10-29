@@ -56,36 +56,14 @@ var duel4id = Duels.id();
 var duel5id = Duels.id();
 var duel6id = Duels.id();
 
-// Promise.all([
-//   Colonies.remove({}),
-//   Unibears.remove({}),
-//   Weresquirrels.remove({}),
-//   Duels.remove({}),
-//   UnibearAgreements.remove({}),
-//   WeresquirrelAgreements.remove({}),
-//   WeresquirrelStats.remove({})
-// ]).then(function () {
-//     return Promise.all([
-//       Duels.insert({_id: duel1id, first_colony: colony1id, second_colony: colony2id, won: colony2id, lost: colony1id }),
-//       Duels.insert({_id: duel2id, first_colony: colony3id, second_colony: colony4id, won: colony3id, lost: colony4id }),
-//       Duels.insert({_id: duel3id, first_colony: colony1id, second_colony: colony3id, won: colony3id, lost: colony1id }),
-//       Duels.insert({_id: duel4id, first_colony: colony4id, second_colony: colony2id, won: colony4id, lost: colony2id }),
-//       Duels.insert({_id: duel5id, first_colony: colony4id, second_colony: colony1id, won: colony1id, lost: colony4id }),
-//       Duels.insert({_id: duel6id, first_colony: colony2id, second_colony: colony3id, won: colony3id, lost: colony2id }),
-//     ])
-// }).then(function () {
-//   db.close()
-// });
-
-
 
 Promise.all([
   Colonies.remove().then(function () {
     return Promise.all([
-      Colonies.insert({_id: colony1id}),
-      Colonies.insert({_id: colony2id}),
-      Colonies.insert({_id: colony3id}),
-      Colonies.insert({_id: colony4id}),
+      Colonies.insert({_id: colony1id, name:'House Mario'}),
+      Colonies.insert({_id: colony2id, name:'House Luigi'}),
+      Colonies.insert({_id: colony3id, name:'House Peach'}),
+      Colonies.insert({_id: colony4id, name:'House Toad'}),
     ]);
   }),
   Unibears.remove().then(function () {

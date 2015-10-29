@@ -1,0 +1,12 @@
+extends ../layout
+
+block content
+  .container
+    .row
+      for colony in allColonies
+        .col-md-3.padding-top
+          h2.text-warning= colony.name
+          h3.text-success Duels Won: 
+            =  colony.duelsWon.length
+          a.text-info(href='/colonies/'+colony._id) See Colony
+
