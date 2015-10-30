@@ -1,12 +1,23 @@
 extends ../layout
 
 block content
+  nav.navbar.navbar-inverse
+    .container-fluid
+      .navbar-header
+        button.navbar-toggle.collapsed(type='button', data-toggle='collapse', data-target='#bs-example-navbar-collapse-1', aria-expanded='false')
+          span.sr-only Toggle navigation
+          span.icon-bar
+          span.icon-bar
+          span.icon-bar
+        a.navbar-brand(href='/colonies') Home
+      ul.nav.navbar-nav.navbar-right
+        li
+          a(href='/colonies/weresquirrels') SEE ALL WERESQUIRRELS
   .container
-    .col-md-9
+    .col-md-9.col-md-offset-1
       h1 Colony's Weresquirrels
-      a(href='/colonies' class='btn btn-primary') Home
-      for weresquirrel in weresquirrels
-        .row
+      .row
+        for weresquirrel in weresquirrels
           .col-md-6
             h2.text-center.text-danger= weresquirrel.name
             table.table.table-striped.table-bordered

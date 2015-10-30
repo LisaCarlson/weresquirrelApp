@@ -10,3 +10,21 @@ a {
 .padding-top {
   padding-top: 40px;
 }
+
+.colony {
+  margin: 20px;
+  border: 1px solid #000;
+  height: 250px;
+  width: 250px;
+  box-shadow: 0 0 5px 10px #000;
+}
+
+img.squirrelpic {
+  height: 200px;
+  width: 200px;
+}
+
+.thumbnail {
+  margin-top: 20px;
+  box-shadow: 0 0 5px 10px #000;
+}

@@ -24,6 +24,57 @@ var JoinColoniesDuels = function (colonies, duels) {
   return colonies;
 }
 
+var JoinWeresquirrelColony = function (weresquirrels, colonies) {
+  weresquirrels.forEach(function (weresquirrel) {
+    colonies.forEach(function (colony) {
+      if (weresquirrel.colonyId.toString() === colony._id.toString()) {
+        weresquirrel.colonyName = colony.name;
+      }
+    });
+  });
+  return weresquirrels;
+}
+
+
+router.get('/weresquirrels', function(req, res, next) {
+  var result = {};
+  Weresquirrels.find({}).then(function (weresquirrels) {
+    return weresquirrels;
+  }).then(function (weresquirrels) {
+    var weresquirrelData = [];
+    var promises = [];
+    weresquirrels.forEach(function (weresquirrel) {
+      weresquirrelData.push({weresquirrel_id: weresquirrel._id, name: weresquirrel.name, img: weresquirrel.img, duels: []});
+      promises.push(WeresquirrelStats.find({weresquirrelId: weresquirrel._id}))
+    });
+    Promise.all(promises).then(function (weresquirrelStats) {
+      weresquirrelStats.forEach(function (duelStats, i) {
+        duelStats.forEach(function (duelStat) {
+          weresquirrelData[i].duels.push(duelStat);
+        });
+      });
+      result['weresquirrelData'] = weresquirrelData;
+      return result;
+    }).then(function (result) {
+      var promises2 = [];
+      result.weresquirrelData.forEach(function (weresquirrel) {
+        promises2.push(WeresquirrelAgreements.find({weresquirrelId: weresquirrel.weresquirrel_id}));
+      });
+      Promise.all(promises2).then(function (agreements) {
+        agreements.forEach(function (agreement, i) {
+          result.weresquirrelData[i]['colonyId'] = agreement[0].colonyId;
+        });
+        return result;
+      }).then(function (result) {
+        Colonies.find({}).then(function (colonies) {
+          JoinWeresquirrelColony(result.weresquirrelData, colonies);
+          res.render('colonies/stat', {weresquirrels: result.weresquirrelData});
+        });
+      });
+    });
+  });
+});
+
 
 router.get('/', function(req, res, next) {
   Colonies.find({}).then(function (colonies) {
@@ -32,7 +83,6 @@ router.get('/', function(req, res, next) {
       res.render('colonies/home', {allColonies: colonies});
     });
   });
-
 });
 
 
@@ -86,10 +136,11 @@ router.get('/:id', function(req, res, next) {
         return result;
       }).then(function (result) {
         res.render('colonies/show', {weresquirrels: result.weresquirrelData, unibears: result.unibears})
-      })
-    })
-  })
-})
+      });
+    });
+  });
+});
+
 
 
 
